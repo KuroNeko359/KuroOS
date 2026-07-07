@@ -1,5 +1,7 @@
 # Minimal RISC-V OS
 
+This project is base on RISC-V instruction set, and it is can only run in QEMU virtual environment nowly.
+
 Build:
 
 ```sh
