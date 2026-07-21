@@ -1,5 +1,8 @@
 # Minimal RISC-V OS
 
+This project has been rewritten in Rust,
+https://github.com/KuroNeko359/NekOS
+
 Build:
 
 ```sh
