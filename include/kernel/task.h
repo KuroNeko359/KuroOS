@@ -24,6 +24,7 @@ struct task {
     unsigned long kernel_stack_base;
     unsigned long user_stack_base;
     unsigned long stack_size;
+    unsigned long user_image_size;
     long exit_code;
     pagetable_t pagetable;
     struct list_head task_node;
@@ -31,6 +32,10 @@ struct task {
 };
 
 struct task *task_create(void (*entry)(void));
+struct task *task_create_user(unsigned long image_start,
+                              unsigned long image_end,
+                              void (*entry)(void));
+void task_destroy(struct task *task);
 struct task *task_current(void);
 void task_set_current(struct task *task);
 struct trap_frame *task_exit_current(struct trap_frame *tf, long code);
@@ -40,3 +45,7 @@ struct task *task_pick_next(void);
 void task_dump_run_queue(void);
 
 #endif
+
+struct task *task_fork(struct trap_frame *tf);
+
+void task_list_all(void);

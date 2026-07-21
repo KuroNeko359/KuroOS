@@ -43,3 +43,18 @@ long getpid(void)
 {
     return syscall3(SYS_getpid, 0, 0, 0);
 }
+
+long fork(void)
+{
+    return syscall3(SYS_fork, 0, 0, 0);
+}
+
+long ps(void)
+{
+    return syscall3(SYS_ps, 0, 0, 0);
+}
+
+long exec(const char *filename)
+{
+    return syscall3(SYS_exec, (long)filename, 0, 0);
+}

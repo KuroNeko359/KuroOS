@@ -34,6 +34,18 @@ pagetable_t pgtable_create(void)
     return root;
 }
 
+/**
+ * @brief This function walks the multi-level page table to find the leaf Page Table Entry (PTE)
+ *        corresponding to a given virtual address. It can optionally allocate missing intermediate page tables.
+ *
+ * @param root  The root page table address (page table directory base).
+ * @param va    The virtual address to look up or map.
+ * @param alloc If non-zero, allocate intermediate page tables if they do not exist.
+ *              If zero, only perform a lookup and return 0 if any intermediate table is missing.
+ * @return pte_t* Pointer to the leaf PTE (Level 0) on success.
+ *                Returns 0 (NULL) if the page table walk fails, an intermediate table is missing (and alloc is 0),
+ *                or memory allocation for a new table fails.
+ */
 pte_t *pgtable_walk(pagetable_t root, unsigned long va, int alloc)
 {
     pagetable_t table = root;

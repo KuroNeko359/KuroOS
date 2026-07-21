@@ -69,3 +69,7 @@ void pgtable_test(void);
 
 
 #endif
+
+#define PAGE_WRITE  (PTE_R | PTE_W | PTE_A | PTE_D)
+#define PAGE_EXEC   (PTE_R | PTE_X | PTE_A | PTE_D)
+#define PAGE_READ   (PTE_R | PTE_A | PTE_D)

@@ -1,5 +1,6 @@
 #include <abi/syscall.h>
 #include <drivers/uart.h>
+#include <kernel/exec.h>
 #include <kernel/panic.h>
 #include <kernel/printk.h>
 #include <kernel/sbi.h>
@@ -25,10 +26,6 @@ static long sys_write(long fd, const char *buf, unsigned long len)
 
 /*
  * Read one line from stdin into a user buffer.
- *
- * This early kernel has no copy_from_user or page tables yet, so user pointers
- * are treated as directly accessible kernel addresses. That is good enough for
- * the first shell, but will need tightening once virtual memory exists.
  */
 static long sys_read(long fd, char *buf, unsigned long len)
 {
@@ -104,15 +101,31 @@ static long sys_getpid(void)
 }
 
 /*
+ * Fork the current process.
+ */
+static long sys_fork(struct trap_frame *tf)
+{
+    struct task *child;
+
+    child = task_fork(tf);
+    if (!child) {
+        return -1;
+    }
+
+    return tf->a0;
+}
+
+/*
+ * List all processes.
+ */
+static long sys_ps(void)
+{
+    task_list_all();
+    return 0;
+}
+
+/*
  * Dispatch a U-mode syscall.
- *
- * The user ABI is:
- *   a7 = syscall number
- *   a0..a2 = arguments
- *   a0 = return value
- *
- * sepc points at the ecall instruction, so advance it by 4 before returning to
- * user mode. Otherwise sret would execute the same ecall again forever.
  */
 struct trap_frame *syscall_dispatch(struct trap_frame *tf)
 {
@@ -137,6 +150,18 @@ struct trap_frame *syscall_dispatch(struct trap_frame *tf)
     case SYS_getpid:
         tf->sepc += 4;
         tf->a0 = sys_getpid();
+        return tf;
+    case SYS_fork:
+        tf->sepc += 4;
+        tf->a0 = sys_fork(tf);
+        return tf;
+    case SYS_ps:
+        tf->sepc += 4;
+        tf->a0 = sys_ps();
+        return tf;
+    case SYS_exec:
+        tf->sepc += 4;
+        tf->a0 = sys_exec((const char *)tf->a0, tf);
         return tf;
     default:
         printk("unknown syscall: %lu\n", tf->a7);

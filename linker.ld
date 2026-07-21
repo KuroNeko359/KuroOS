@@ -7,8 +7,23 @@ SECTIONS
 
   .text : {
     *(.text.entry)
-    *(.text .text.*)
+    *(EXCLUDE_FILE (build/user/*.o) .text .text.*)
   }
+
+  . = ALIGN(4096);
+  __user_start = .;
+  .user : {
+    build/user/*.o(.text .text.*)
+    build/user/*.o(.srodata .srodata.*)
+    build/user/*.o(.rodata .rodata.*)
+    build/user/*.o(.sdata .sdata.*)
+    build/user/*.o(.data .data.*)
+    build/user/*.o(.sbss .sbss.*)
+    build/user/*.o(.bss .bss.*)
+    build/user/*.o(COMMON)
+  }
+  . = ALIGN(4096);
+  __user_end = .;
 
   .rodata : {
     *(.srodata .srodata.*)
@@ -22,8 +37,8 @@ SECTIONS
 
   .bss : {
     __bss_start = .;
-    *(.sbss .sbss.*)
-    *(.bss .bss.*)
+    *(EXCLUDE_FILE (build/user/*.o) .sbss .sbss.*)
+    *(EXCLUDE_FILE (build/user/*.o) .bss .bss.*)
     *(.scommon)
     *(COMMON)
     __bss_end = .;

@@ -6,5 +6,8 @@ long read(int fd, char *buf, unsigned long len);
 void yield(void);
 void exit(int code);
 long getpid(void);
+long fork(void);
+long ps(void);
+long exec(const char *filename);
 
 #endif
