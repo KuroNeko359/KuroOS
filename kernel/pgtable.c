@@ -65,6 +65,18 @@ pte_t *pgtable_walk(pagetable_t root, unsigned long va, int alloc)
     return &table[vpn_index(0, va)];
 }
 
+
+/**
+ * @brief This function maps a contiguous range of virtual addresses to physical addresses in the page table.
+ *        It iterates through the specified size, creating page table entries (PTEs) for each page.
+ * 
+ * @param root  The root page table address (page table directory base).
+ * @param va    The starting virtual address to be mapped.
+ * @param pa    The starting physical address to map to (must be page-aligned).
+ * @param size  The size of the memory region to map, in bytes.
+ * @param flags The page table entry flags (e.g., permissions like Read/Write, User/Supervisor).
+ * @return int  0 on success, -1 on failure (e.g., if page table walk fails or the virtual page is already mapped).
+ */
 int pgtable_map(pagetable_t root, unsigned long va, unsigned long pa,
                 unsigned long size, unsigned long flags)
 {
